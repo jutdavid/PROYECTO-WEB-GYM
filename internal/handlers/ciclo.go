@@ -57,3 +57,34 @@ func (s *Server) CrearCiclo(w http.ResponseWriter, r *http.Request) {
 	creado := s.Storage.CrearCiclo(nuevo)
 	ResponderJSON(w, http.StatusCreated, creado)
 }
+
+// ActualizarCiclo atiende PUT /api/v1/ciclos/{id}.
+func (s *Server) ActualizarCiclo(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.ParseUint(chi.URLParam(r, "id"), 10, 64)
+	if err != nil {
+		ResponderError(w, http.StatusBadRequest, "id debe ser un número entero positivo")
+		return
+	}
+
+	var datos models.CicloEntrenamiento
+	if err := json.NewDecoder(r.Body).Decode(&datos); err != nil {
+		ResponderError(w, http.StatusBadRequest, "JSON inválido: "+err.Error())
+		return
+	}
+	if datos.AtletaID == 0 {
+		ResponderError(w, http.StatusBadRequest, "el campo atleta_id es obligatorio")
+		return
+	}
+	if strings.TrimSpace(datos.Estado) == "" {
+		ResponderError(w, http.StatusBadRequest, "el campo estado es obligatorio")
+		return
+	}
+
+	actualizado, encontrado := s.Storage.ActualizarCiclo(uint(id), datos)
+	if !encontrado {
+		ResponderError(w, http.StatusNotFound, "ciclo de entrenamiento no encontrado")
+		return
+	}
+
+	ResponderJSON(w, http.StatusOK, actualizado)
+}
