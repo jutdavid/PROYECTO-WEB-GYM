@@ -1,11 +1,14 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 
+	"atletismo-api/internal/models"
 	"atletismo-api/internal/storage"
 )
 
@@ -34,4 +37,22 @@ func (s *Server) ObtenerAtleta(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ResponderJSON(w, http.StatusOK, atleta)
+}
+
+func (s *Server) CrearAtleta(w http.ResponseWriter, r *http.Request) {
+	var nuevo models.Atleta
+	if err := json.NewDecoder(r.Body).Decode(&nuevo); err != nil {
+		ResponderError(w, http.StatusBadRequest, "JSON invalido: "+err.Error())
+		return
+	}
+	if strings.TrimSpace(nuevo.Nombre) == "" {
+		ResponderError(w, http.StatusBadRequest, "el campo nombre es obligatorio")
+		return
+	}
+	if nuevo.Peso < 0 {
+		ResponderError(w, http.StatusBadRequest, "el peso no puede ser negativo")
+		return
+	}
+	creado := s.Storage.CrearAtleta(nuevo)
+	ResponderJSON(w, http.StatusCreated, creado)
 }
