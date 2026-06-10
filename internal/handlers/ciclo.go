@@ -88,3 +88,19 @@ func (s *Server) ActualizarCiclo(w http.ResponseWriter, r *http.Request) {
 
 	ResponderJSON(w, http.StatusOK, actualizado)
 }
+
+// BorrarCiclo atiende DELETE /api/v1/ciclos/{id}.
+func (s *Server) BorrarCiclo(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.ParseUint(chi.URLParam(r, "id"), 10, 64)
+	if err != nil {
+		ResponderError(w, http.StatusBadRequest, "id debe ser un número entero positivo")
+		return
+	}
+
+	if !s.Storage.BorrarCiclo(uint(id)) {
+		ResponderError(w, http.StatusNotFound, "ciclo de entrenamiento no encontrado")
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
