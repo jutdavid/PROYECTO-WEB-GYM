@@ -1,7 +1,7 @@
 package models
 
 type Entrenador struct {
-	ID              uint    `json:"id"`
+	ID              int     `json:"id"`
 	Nombre          string  `json:"nombre"`
 	Especialidad    string  `json:"especialidad"`
 	CapacidadMaxima int     `json:"capacidad_maxima"`
