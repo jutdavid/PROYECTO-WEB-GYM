@@ -17,13 +17,13 @@ func (s *Server) ListarEntrenadores(w http.ResponseWriter, _ *http.Request) {
 }
 
 func (s *Server) ObtenerEntrenador(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.ParseUint(chi.URLParam(r, "id"), 10, 64)
-	if err != nil {
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil || id <= 0 {
 		ResponderError(w, http.StatusBadRequest, "id debe ser un número entero positivo")
 		return
 	}
 
-	entrenador, encontrado := s.Storage.BuscarEntrenadorPorID(uint(id))
+	entrenador, encontrado := s.Storage.BuscarEntrenadorPorID(id)
 	if !encontrado {
 		ResponderError(w, http.StatusNotFound, "entrenador no encontrado")
 		return
@@ -56,8 +56,8 @@ func (s *Server) CrearEntrenador(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) ActualizarEntrenador(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.ParseUint(chi.URLParam(r, "id"), 10, 64)
-	if err != nil {
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil || id <= 0 {
 		ResponderError(w, http.StatusBadRequest, "id debe ser un número entero positivo")
 		return
 	}
@@ -80,7 +80,7 @@ func (s *Server) ActualizarEntrenador(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	actualizado, encontrado := s.Storage.ActualizarEntrenador(uint(id), datos)
+	actualizado, encontrado := s.Storage.ActualizarEntrenador(id, datos)
 	if !encontrado {
 		ResponderError(w, http.StatusNotFound, "entrenador no encontrado")
 		return
@@ -90,13 +90,13 @@ func (s *Server) ActualizarEntrenador(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) BorrarEntrenador(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.ParseUint(chi.URLParam(r, "id"), 10, 64)
-	if err != nil {
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil || id <= 0 {
 		ResponderError(w, http.StatusBadRequest, "id debe ser un número entero positivo")
 		return
 	}
 
-	if !s.Storage.BorrarEntrenador(uint(id)) {
+	if !s.Storage.BorrarEntrenador(id) {
 		ResponderError(w, http.StatusNotFound, "entrenador no encontrado")
 		return
 	}
