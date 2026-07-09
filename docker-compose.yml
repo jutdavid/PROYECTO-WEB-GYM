@@ -1,0 +1,16 @@
+services:
+  api:
+    build: .
+    container_name: atletismo-api
+    environment:
+      PUERTO: ":8080"
+      RUTA_DB: "/app/data/atletismo-api.db"
+      JWT_SECRETO: "cambia-esto-en-produccion-con-valor-largo-y-secreto"
+      JWT_DURACION: "24h"
+    ports:
+      - "8080:8080"
+    volumes:
+      - dbdata:/app/data
+
+volumes:
+  dbdata:

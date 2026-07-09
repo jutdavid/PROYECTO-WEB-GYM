@@ -1,0 +1,13 @@
+.git
+.gitignore
+.env
+*.db
+*.db-journal
+atletismo-api
+*.out
+coverage.html
+README.md
+Dockerfile
+docker-compose.yml
+frontend
+db
